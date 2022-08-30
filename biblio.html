@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIBLIO</title>
+    <script>
+        window.addEventListener("load", ()=>{
+            document.querySelector("#id").addEventListener("input", (evt)=>{
+                let id = document.querySelector("#id").value;
+                if( id ){
+                    const xhttp = new XMLHttpRequest();
+                    xhttp.open("GET", "livre_by_id.php?id=" + id);
+                    xhttp.onreadystatechange = () => {
+                        if(xhttp.readyState == 4 && xhttp.status == 200){
+                            let livre = JSON.parse(xhttp.responseText);
+                            console.log(xhttp.responseText, livre);
+                            let html = "<ul>";
+                            html += "<li>ID : " + livre.id + "</li>";
+                            html += "<li>Titre : " + livre.titre + "</li>";
+                            html += "<li>Auteur : " + livre.auteur + "</li>";
+                            html += "</ul>";
+                            document.querySelector(".fiche-livre").innerHTML = html;
+                        }
+                    };
+                    xhttp.send();
+                }
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script>
+        $(function() {
+            $("#idAbonne").on("input", () => {
+                let valeur = $("#idAbonne").val();
+                $.ajax({
+                    method: "get",
+                    url: "abonne_by_id.php?id=" + valeur,
+                    dataType: "json",
+                    success: (data) => {
+                        let html = "<ul>";
+                        html += "<li>ID : " + data.id + "</li>";
+                        html += "<li>Pseudo : " + data.pseudo + "</li>";
+                        html += "<li>Prénom : " + data.prenom + "</li>";
+                        html += "<li>Nom : " + data.nom + "</li>";
+                        html += "<li>Niveau : " + data.niveau + "</li>";
+                        html += "</ul>";
+                        $(".fiche-livre").html(html);
+                    },
+                    error: (jqXHR, status, error) => {
+                        $(".fiche-livre").html("Erreur " + status + " (" + error + ")");
+                    }
+                });
+            })
+        });
+    </script>
+</head>
+<body>
+    <h1>BIBLIO</h1>
+    <label for="id">Numéro du livre</label>
+    <input type="text" name="id" id="id">
+    <br>
+    <label for="id">Numéro de l'abonné</label>
+    <input type="text" name="idAbonne" id="idAbonne">
+
+    <hr>
+    <div class="fiche-livre"></div>
+</body>
+</html>
